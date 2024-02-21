@@ -7,6 +7,14 @@ function App() {
 
   const [ user, setUser ] = useState({});
 
+  useEffect(() => {
+    fetch("http://127.0.0.1:5555/check_session", {
+      credentials: "include",
+    })
+    .then(response => response.json())
+    .then(user => setUser(user))
+  }, [])
+
   return (
     <div className="App">
         <NavBar user={user} setUser={setUser} />

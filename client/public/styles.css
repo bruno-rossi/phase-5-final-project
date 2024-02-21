@@ -5,72 +5,194 @@ html {
 body {
     margin: 0 auto;
     font-size: 16px;
+    height: 100vh;
+}
+
+* {
+    font-family: "Noto Sans", sans-serif;
+    font-optical-sizing: auto;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;       /* enable the "border-box effect" everywhere */
 }
 
 /* NavBar */
-
-#navbar {
+.navbar {
     position: relative;
     top: 0;
     width: 100%;
-    height: 40px;
     left: 0;
-    background-color: darkolivegreen;
+    background-color: #72A58C;
     margin: 0;
+    /* display: flex;
+    flex-wrap: nowrap; */
 }
 
-#navbar ul {
+#logo {
+    width: 200px;
+    text-align: center;
+    float: left;
+}
+
+#hamburger-menu {
+    display: none;
+}
+
+.navbar ul {
     margin: 0;
     padding: 0;
     list-style-type: none;
+    display: inline-flex;
 }
 
-#navbar ul li {
-    display: inline;
+.navbar ul:last-of-type {
+    float: right;
 }
 
-#navbar a.active {
-    color: red;
+.navbar a, #navbar a:visited {
+    display: inline-block;
+    text-align: center;
+    padding: 15px 15px;
+    text-decoration: none;
+    color: #FCFAF9;
+}
+
+.navbar a.active {
+    background-color: #845D70;
+    color: #FCFAF9;
+}
+
+@media (max-width: 500px) {
+
+    .navbar {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+    }
+    #hamburger-menu {
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: inline-flex;
+    }
+    .navbar ul {
+        display: none;
+        width: 100%;
+    }
+    .navbar ul a {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 2%;
+    }
 }
 
 /* Footer */
 #footer {
     width: 100%;
-    position: fixed;
+    position: absolute;
+    margin-top: 10px;
     left: 0;
     bottom: 0;
     text-align: center;
-    background-color: darkblue;
-    color: white;
+    background-color: #72A58C;
+    color: #FCFAF9;
+}
+
+#footer p {
+    margin: 0;
 }
 
 .main {
     width: 100%;
-    height: 100vh;
-    background-color: cadetblue;
+    height: 100%;
+    background-color: #FCFAF9;
+    padding-top: 5vh;
+
+}
+
+@media (max-width: 500px) {
+    #footer {
+        position: fixed;
+    }
 }
 
 /* Login/Signup form */
 
 .login-form {
-    width: 60vw;
-    margin: 0 auto;
-    background-color: antiquewhite;
+    width: 50%;
+    max-height: 80%;
+    margin: 0 auto ;
+    background-color: #845D70;
+    padding: 1px;
+    color: #FCFAF9;
+    border-radius: 10px;
 }
 
 .login-form h1, .login-form p {
-    margin: 0 auto;
+    margin-left: 5%;
+}
+
+.login-form a {
+    color: #FCFAF9;
+}
+
+.login-form hr {
+    width: 80%;
+    border: 1px solid #FCFAF9;
 }
 
 .login-form fieldset {
     border: 0;
+    padding: 0;
 }
 
 .login-form input {
     border: 0;
     display: block;
-    margin: 10px auto;
-    height: 40px;
+    margin: 0.5rem auto;
+    padding: 2%;
+    height: 2rem;
+    width: 50%;
+    background-color: #FCFAF9;
+    border-radius: 10px;
+    font-size: 1rem;
+}
+
+.login-form input::placeholder {
+    color: #1A3139;
+}
+
+.login-form input[type="submit"] {
+    margin: 1rem auto 2rem auto;
+    width: 30%;
+    padding: 0;
+}
+
+@media (max-width: 950px) {
+    .login-form {
+        width: 70%;
+        padding: 0px;
+        overflow: hidden;
+    }
+    .login-form input {
+        width: 60%;
+        min-width: 220px;
+    }
+}
+
+@media (max-width: 650px) {
+    .login-form {
+        width: 90%;
+        padding: 0px;
+        overflow: hidden;
+    }
+    .login-form input {
+        width: 70%;
+    }
 }
 
 .sr-only {

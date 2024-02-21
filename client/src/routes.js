@@ -2,6 +2,7 @@ import App from "./components/App";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Courses from "./pages/Courses";
 
 const routes = [
     {
@@ -20,6 +21,10 @@ const routes = [
             {
                 path: '/signup/',
                 element: <Signup />
+            },
+            {
+                path: '/courses/',
+                element: <Courses />
             }
         ]
     }

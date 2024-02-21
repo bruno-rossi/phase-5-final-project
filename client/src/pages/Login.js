@@ -1,4 +1,4 @@
-import { Link, useOutletContext } from "react-router-dom";
+import { Link, useOutletContext, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 function Login() {
@@ -7,6 +7,8 @@ function Login() {
     const [ password, setPassword ] = useState("");
 
     const { user, setUser } = useOutletContext();
+
+    const navigate = useNavigate()
 
     function handleSubmit(event) {
         event.preventDefault();
@@ -33,6 +35,7 @@ function Login() {
             })
             .then(newUser => {
                 setUser(newUser);
+                navigate("/")
             })
             .catch(error => {
                 console.log(error);
@@ -54,7 +57,7 @@ function Login() {
                         <label className="sr-only" htmlFor="password">Password:</label>
                         <input 
                             id="password" type="password" placeholder="Password" 
-                            value={password} onChange={event => setPassword(event.target.value)}>    
+                            value={password} onChange={event => setPassword(event.target.value)}>  
                         </input>
                     </fieldset>
                     <input type="submit" value="Submit"></input>
