@@ -3,7 +3,7 @@ import { NavLink, useOutletContext } from "react-router-dom";
 function Home() {
 
     return (
-        <div>
+        <div className="main">
             <h1>Homepage</h1>
         </div>
     )

@@ -6,13 +6,17 @@ import Footer from './Footer';
 function App() {
 
   const [ user, setUser ] = useState({});
+  console.log(user)
 
   useEffect(() => {
     fetch("http://127.0.0.1:5555/check_session", {
       credentials: "include",
     })
-    .then(response => response.json())
-    .then(user => setUser(user))
+    .then(response => {
+      if (response.ok) {
+        setUser(user);
+      }
+    })
   }, [])
 
   return (

@@ -1,5 +1,6 @@
 html {
     box-sizing: border-box;
+    background-color: #72A58C;
 }
 
 body {
@@ -17,6 +18,39 @@ body {
 *:before,
 *:after {
     box-sizing: inherit;       /* enable the "border-box effect" everywhere */
+}
+
+/* Building blocks */
+.main {
+    width: 100%;
+    height: 100%;
+    background-color: #FCFAF9;
+    padding-top: 5vh;
+    padding-bottom: 5vh;
+}
+
+.filters-container {
+    border: 1px solid;
+}
+
+.courses-container {
+    border: 1px solid;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+.courses-container a {
+    text-decoration: none;
+    color: black;
+}
+
+.course-card {
+    border: 1px solid;
 }
 
 /* NavBar */
@@ -93,7 +127,7 @@ body {
 /* Footer */
 #footer {
     width: 100%;
-    position: absolute;
+    position: relative;
     margin-top: 10px;
     left: 0;
     bottom: 0;
@@ -106,17 +140,9 @@ body {
     margin: 0;
 }
 
-.main {
-    width: 100%;
-    height: 100%;
-    background-color: #FCFAF9;
-    padding-top: 5vh;
-
-}
-
 @media (max-width: 500px) {
     #footer {
-        position: fixed;
+        position: relative;
     }
 }
 

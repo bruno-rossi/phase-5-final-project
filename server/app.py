@@ -3,9 +3,9 @@
 from flask import request, session
 from config import app, db
 import os
-from models import User
+from models import User, Course
 
-# Sign Up
+# Sign up
 @app.route('/signup', methods=['POST'])
 def signup():
     email = request.get_json()['email']
@@ -46,17 +46,9 @@ def login():
 def delete():
 
         session['user_id'] = None
+        session.clear()
 
         return {}, 204
-
-# Clear session
-# @app.route('/clear-session', methods=['DELETE'])
-# def delete():
-    
-#         session['page_views'] = None
-#         session['user_id'] = None
-
-#         return {}, 204
 
 # Check session
 @app.route('/check_session')
@@ -70,4 +62,44 @@ def get():
         return user.to_dict(), 200
     else:
         return {'message': '401: Not Authorized'}, 401
-    
+
+# Get user by id
+@app.route('/users/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+def user_by_id(id):
+    user = User.query.filter(User.id == id).first()
+
+    if user:
+        if request.method == 'GET':
+            return user.to_dict(), 200
+        if request.method == 'PATCH':
+            for attr in request.get_json():
+                setattr(user, attr, request.get_json()[attr])
+
+            db.session.add(user)
+            db.session.commit()
+
+            return user.to_dict(), 202
+
+        if request.method == 'DELETE':
+            db.session.delete(user)
+            db.session.commit()
+
+            return {"success": "User has been successfully deleted"}, 204
+    else:
+        return { "error": "User not found" }, 404
+
+# Get all courses
+@app.route('/courses/')
+def all_courses():
+    courses = [course.to_dict() for course in Course.query.all()]
+
+    return courses, 200
+
+@app.route('/courses/<int:id>')
+def get_course_by_id(id):
+    course = Course.query.filter(Course.id == id).first()
+
+    if course:
+        return course.to_dict(), 200
+    else:
+        return {"error": "Course not found."}, 404

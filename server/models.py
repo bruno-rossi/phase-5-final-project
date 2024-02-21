@@ -3,11 +3,14 @@ from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.orm import validates
 from config import db, bcrypt
 
+
+# ============= User =============
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String, unique=True, nullable=False)
+    name = db.Column(db.String)
     _password_hash = db.Column(db.String)
 
     @hybrid_property
@@ -23,8 +26,10 @@ class User(db.Model, SerializerMixin):
         return bcrypt.check_password_hash(self._password_hash, password.encode('utf-8'))
 
     # Relationships:
+    courses = db.relationship('UserCourse', back_populates='user')
 
     # Serialization:
+    serialize_rules = ['-courses']
 
     # Validations
     @validates('email')
@@ -38,3 +43,89 @@ class User(db.Model, SerializerMixin):
     def __repr__(self) -> str:
         return f"<User {self.email}, id: {self.id}"
 
+
+# ============= UserCourse =============
+class UserCourse(db.Model, SerializerMixin):
+    __tablename__ = 'users_courses'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    course_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
+
+    # Relationships:
+    user = db.relationship('User', back_populates='courses')
+    course = db.relationship('Course', back_populates='users')
+
+    # Serialization:
+    serialize_rules = ['-user.courses', '-course.users']
+
+    # Validations:
+
+    def __repr__(self) -> str:
+        return f"<UserCourse id: {self.id} user {self.user_id} course {self.course_id}"
+    
+
+# ============= Course =============
+class Course(db.Model, SerializerMixin):
+    __tablename__ = 'courses'
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String)
+    language_id = db.Column(db.Integer, db.ForeignKey('languages.id'))
+
+    # Relationships:
+    users = db.relationship('UserCourse', back_populates='course')
+    language = db.relationship('Language', back_populates='courses')
+    lessons = db.relationship('Lesson', back_populates='course')
+
+    # Serialization:
+    serialize_rules = ['-language.courses', '-language.lessons', '-lessons.language', '-lessons.course', '-users']
+
+    # Validations:
+    
+    def __repr__(self) -> str:
+        return f"<Course {self.id}, language: {self.language}"
+
+
+# ============= Lesson =============
+class Lesson(db.Model, SerializerMixin):
+    __tablename__ = 'lessons'
+
+    id = db.Column(db.Integer, primary_key=True)
+    language_id = db.Column(db.Integer, db.ForeignKey('languages.id'))
+    course_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
+    title = db.Column(db.String)
+    content = db.Column(db.String)
+
+    # Relationships:
+    language = db.relationship('Language', back_populates='lessons')
+    course = db.relationship('Course', back_populates='lessons')
+
+    # Serialization:
+    serialize_rules = ['-language.courses', '-language.lessons', '-course.language', '-course.lessons']
+
+    # Validations:
+
+    def __repr__(self) -> str:
+        return f"<Lesson {self.id}, language: {self.language}>"
+
+
+# ============= Language =============
+class Language(db.Model, SerializerMixin):
+    __tablename__ = 'languages'
+
+    id = db.Column(db.Integer, primary_key=True)
+    language_name = db.Column(db.String)
+    language_code = db.Column(db.String)
+
+    # Relationships:
+    courses = db.relationship('Course', back_populates='language')
+    lessons = db.relationship('Lesson', back_populates='language')
+
+    # Serialization:
+    serialize_rules = ['-courses.language', '-courses.lessons', '-lessons.language', '-lessons.course']
+
+    # Validations:
+
+    def __repr__(self) -> str:
+        return f"<Language {self.id}, language: {self.language_code}"

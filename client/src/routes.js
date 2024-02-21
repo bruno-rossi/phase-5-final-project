@@ -3,6 +3,8 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Courses from "./pages/Courses";
+import Profile from "./pages/Profile";
+import CoursePage from "./pages/CoursePage";
 
 const routes = [
     {
@@ -25,6 +27,14 @@ const routes = [
             {
                 path: '/courses/',
                 element: <Courses />
+            },
+            {
+                path: '/users/:id',
+                element: <Profile />
+            },
+            {
+                path: '/courses/:id',
+                element: <CoursePage />
             }
         ]
     }

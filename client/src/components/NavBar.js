@@ -1,14 +1,17 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 function NavBar({ user, setUser }) {
+
+    const navigate = useNavigate();
 
     function handleLogOut() {
         fetch("http://127.0.0.1:5555/logout", {
             method: 'DELETE',
-            credentials: "include"
+            credentials: 'include',
         })
         .then(response => { if (response.ok) {
             setUser(null);
+            navigate('/login');
         }})
     }
 
@@ -35,7 +38,7 @@ function NavBar({ user, setUser }) {
 
             {user ? 
             (<ul className="nav-ul">
-                <li className="nav-li"><NavLink to="/profile">Profile</NavLink></li>
+                <li className="nav-li"><NavLink to={`/users/${user.id}`}>Profile</NavLink></li>
                 <li className="nav-li"><a onClick={handleLogOut}>Log out</a></li>
             </ul>) :
             (<ul className="nav-ul">
