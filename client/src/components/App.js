@@ -1,22 +1,22 @@
 import { useState, useEffect } from "react";
-import { Outlet, Navigate, useNavigate, NavLink } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import NavBar from './NavBar';
 import Footer from './Footer';
 
 function App() {
 
-  const [ user, setUser ] = useState({});
-  console.log(user)
+  const [ user, setUser ] = useState(null);
 
   useEffect(() => {
     fetch("http://127.0.0.1:5555/check_session", {
-      credentials: "include",
+      credentials: 'include',
     })
     .then(response => {
       if (response.ok) {
-        setUser(user);
+        return response.json()
       }
     })
+    .then(user => setUser(user))
   }, [])
 
   return (

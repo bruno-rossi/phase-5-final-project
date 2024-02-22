@@ -16,13 +16,13 @@ if __name__ == '__main__':
 
         print("Seeding users...")
 
-        user1 =  User(email="brunogabrielrossi@gmail.com")
+        user1 =  User(email="brunogabrielrossi@gmail.com", name="")
         user1.password_hash = "test"
 
-        user2 = User(email="andrew@test.com")
+        user2 = User(email="andrew@test.com", name="")
         user2.password_hash = "test"
 
-        user3 = User(email="katie@test.com")
+        user3 = User(email="katie@test.com", name="")
         user3.password_hash = "test"
 
         users = [

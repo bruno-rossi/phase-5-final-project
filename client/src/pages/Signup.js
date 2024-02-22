@@ -28,7 +28,7 @@ function Signup() {
             .then(response => {
                 if (response.ok) {
                     return response.json();
-                } else if (response.status == 409) {
+                } else if (response.status === 409) {
                     throw new Error('Failed to create user');
                 };
             })

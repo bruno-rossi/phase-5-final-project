@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import CourseCard from "../components/CourseCard";
-import { Link } from "react-router-dom";
 
 function Courses() {
 
     const [ courses, setCourses ] = useState([])
 
     useEffect(() => {
-        fetch("http://127.0.0.1:5555/courses")
+        fetch("http://127.0.0.1:5555/courses", {
+            credentials: "include",
+        })
         .then(response => response.json())
         .then(courses => setCourses(courses))
     }, [])
@@ -27,7 +28,7 @@ function Courses() {
             </div>
             <div className="courses-container">{
                 courses.length !== 0 ? courses.map(course => {
-                    return <Link to={`/courses/${course.id}`}><CourseCard key={course.id} course={course}>{course.title}</CourseCard></Link>
+                    return <CourseCard key={course.id} course={course}>{course.title}</CourseCard>
                 }) : <div><h1>No courses yet.</h1><p>It looks like there are no courses to display! Try adjusting the filters.</p></div>
             }</div>
         </div>

@@ -1,9 +1,10 @@
-import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
+import { useState } from "react";
 
 function Profile() {
 
     const { user, setUser } = useOutletContext();
+    
     const [ name, setName ] = useState(user.name);
 
     function handleSaveProfile(event) {
@@ -16,18 +17,16 @@ function Profile() {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
+            credentials: 'include',
             body: JSON.stringify({
                 name
             })
         })
         .then(response => {
+            console.log(response);
             if (response.ok) {
-                return response.json();
+                response.json().then(updatedUser => setUser(updatedUser));
             }
-        })
-        .then(updatedUser => {
-            setUser(() => updatedUser);
-            console.log("Profile has been successfully updated.");
         })
     }
 
@@ -35,6 +34,8 @@ function Profile() {
         <div className="main">
             <form className="login-form" onSubmit={handleSaveProfile}>
                 <h1>Profile</h1>
+
+                {!user ? <h1>Loading...</h1> : 
                 <fieldset>
                     <label htmlFor="email">Email:</label>
                     <input id="email" type="email" value={user.email} disabled></input>
@@ -42,6 +43,7 @@ function Profile() {
                     <input id="name" type="text" value={name} onChange={event => setName(event.target.value)}></input>
                     <input type="submit" value="Save"></input>
                 </fieldset>
+                }
             </form>
         </div>
     )
