@@ -55,15 +55,13 @@ class UserCourse(db.Model, SerializerMixin):
     # Relationships:
     user = db.relationship('User', back_populates='courses')
     course = db.relationship('Course', back_populates='users')
+    user_lessons = db.relationship('UserLesson', back_populates='user_course')
 
     # Serialization:
-    serialize_rules = ['-user.courses', '-course.users']
-
-    # Validations:
+    serialize_rules = ['-user.courses', '-course.users', '-user_lessons.user_course']
 
     def __repr__(self) -> str:
         return f"<UserCourse id: {self.id} user {self.user_id} course {self.course_id}"
-    
 
 # ============= Course =============
 class Course(db.Model, SerializerMixin):
@@ -86,6 +84,25 @@ class Course(db.Model, SerializerMixin):
     def __repr__(self) -> str:
         return f"<Course {self.id}, language: {self.language}"
 
+# ============= UserLesson =============
+class UserLesson(db.Model, SerializerMixin):
+    __tablename__ = 'users_lessons'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_course_id = db.Column(db.Integer, db.ForeignKey('users_courses.id'))
+    lesson_id = db.Column(db.Integer, db.ForeignKey('lessons.id'))
+    is_unlocked = db.Column(db.Boolean, default=False)
+
+    # Relationships:
+    user_course = db.relationship('UserCourse', back_populates='user_lessons')
+    lesson = db.relationship('Lesson', back_populates='user_lessons')
+
+    # Serialization:
+    serialize_rules = ['-user_course.user_lessons', '-lesson.user_lessons']
+
+    def __repr__(self) -> str:
+        return f"<UserLesson id: {self.id} user_course_id:{self.user_course_id} lesson_id: {self.lesson_id}>"
+
 
 # ============= Lesson =============
 class Lesson(db.Model, SerializerMixin):
@@ -96,13 +113,17 @@ class Lesson(db.Model, SerializerMixin):
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
     title = db.Column(db.String)
     content = db.Column(db.String)
+    prev_lesson = db.Column(db.Integer, db.ForeignKey('lessons.id'))
+    next_lesson = db.Column(db.Integer, db.ForeignKey('lessons.id'))
+    lesson_type = db.Column(db.String)
 
     # Relationships:
     language = db.relationship('Language', back_populates='lessons')
     course = db.relationship('Course', back_populates='lessons')
+    user_lessons = db.relationship('UserLesson', back_populates='lesson')
 
     # Serialization:
-    serialize_rules = ['-language.courses', '-language.lessons', '-course.language', '-course.lessons']
+    serialize_rules = ['-language.courses', '-language.lessons', '-course.language', '-course.lessons', '-user_lessons']
 
     # Validations:
 

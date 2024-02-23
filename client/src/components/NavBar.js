@@ -31,7 +31,7 @@ function NavBar({ user, setUser }) {
 
     return (
         <div className="navbar">
-            <div id="logo"><NavLink to="/">Logo</NavLink></div>
+            <div id="logo"><NavLink to="/">Grapso</NavLink></div>
             <ul className="nav-ul">
                 <li className="nav-li"><NavLink to="/courses">Courses</NavLink></li>
             </ul>

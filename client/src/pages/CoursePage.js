@@ -38,7 +38,7 @@ function CoursePage() {
                         return <LessonItem key={lesson.id} lesson={lesson}></LessonItem>
                     })}
                 </ol>
-                <button onClick={console.log("click!")}>Start course</button>
+                <button onClick={() => navigate(`/lessons/${course.lessons[0].id}`)}>Start course</button>
             </> :
             <h1>Loading...</h1>
             }

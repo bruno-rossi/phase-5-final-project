@@ -3,7 +3,7 @@
 from flask import request, session, make_response
 from config import app, db
 import os
-from models import User, Course, Lesson
+from models import User, Course, Lesson, UserCourse, UserLesson
 
 @app.before_request
 def load_user():
@@ -138,3 +138,42 @@ def get_lesson_by_id(id):
         return lesson.to_dict(), 200
     else:
         return {"error": "Lesson not found."}, 404
+
+@app.route('/courses/<int:course_id>/registration', methods=['GET', 'POST'], endpoint='course-registration')
+def course_registration(course_id):
+
+    # Check if user is already registered:
+    user_id = session.get('user_id')
+
+    user_course = UserCourse.query.filter(UserCourse.course_id == course_id and UserCourse.user_id == user_id).first()
+
+    if user_course:
+        return {"error": "User is already registered"}, 409
+    
+    # Find the course in the db:
+    course = Course.query.filter(Course.id == course_id).first()
+
+    if course:
+        if request.method == 'POST':
+
+            new_user_course = UserCourse(
+                user_id=request.get_json().get('user_id'),
+                course_id=request.get_json().get('course_id')
+            )
+
+            db.session.add(new_user_course)
+            db.session.commit()
+
+            course_lessons = []
+            for lesson in new_user_course.course.lessons:
+                user_lesson = UserLesson(user_course_id=new_user_course.course.id, lesson_id=lesson.id)
+                course_lessons.append(user_lesson)
+
+            db.session.add_all(course_lessons)
+            db.session.commit()
+
+            return new_user_course.to_dict(), 200
+    
+    # Return 404 error if course is not found:
+    elif not course:
+        return {"error": "Course not found."}, 404
