@@ -1,12 +1,14 @@
 from app import app
-from models import db, User, Course, UserCourse, Lesson, Language, UserLesson
+from models import db, User, Course, UserCourse, Lesson, Language, UserLesson, Topic, UserTopic
 
 if __name__ == '__main__':
     with app.app_context():
         print("Clearing db...")
         UserLesson.query.delete()
         UserCourse.query.delete()
+        UserTopic.query.delete()
         Language.query.delete()
+        Topic.query.delete()
         User.query.delete()
         Course.query.delete()
         Lesson.query.delete()
@@ -57,20 +59,38 @@ if __name__ == '__main__':
         db.session.add_all(languages)
         db.session.commit()
 
+        print("Seeding topics...")
+        music = Topic(
+            topic_name="Music",
+            topic_description="Lessons about music and history of musical arts."
+        )
+
+        geography = Topic(
+            topic_name="Geography",
+            topic_description="Courses and lessons about the world."
+        )
+
+        topics = [ music, geography ]
+        db.session.add_all(topics)
+        db.session.commit()
+
         print("Seeding courses...")
         course1_portuguese = Course(
             title="Brazilian Music",
-            language_id=1
+            language_id="1",
+            topic_id="1"
         )
 
         course1_greek = Course(
             title="Greek Islands",
-            language_id="2"
+            language_id="2",
+            topic_id="2"
         )
 
         course1_english = Course(
             title="2000s Pop Music",
-            language_id="3"
+            language_id="3",
+            topic_id="1"
         )
 
         courses = [ course1_portuguese, course1_greek, course1_english]
@@ -80,6 +100,7 @@ if __name__ == '__main__':
         print("Seeding lessons...")
         lesson1 = Lesson(
             language_id="1",
+            topic_id="1",
             course_id="1",
             title="Bossa Nova",
             prev_lesson="",
@@ -91,6 +112,7 @@ if __name__ == '__main__':
 
         lesson2 = Lesson(
             language_id="1",
+            topic_id="1",
             course_id="1",
             title="Funk Carioca",
             prev_lesson="1",
@@ -102,6 +124,7 @@ if __name__ == '__main__':
 
         lesson3 = Lesson(
             language_id="1",
+            topic_id="1",
             course_id="1",
             title="MPB -  Música Popular Brasileira",
             prev_lesson="2",
@@ -114,6 +137,7 @@ if __name__ == '__main__':
 
         lesson4 = Lesson(
             language_id="2",
+            topic_id="2",
             course_id="2",
             title="Mykonos",
             prev_lesson="",
@@ -124,6 +148,7 @@ if __name__ == '__main__':
 
         lesson5 = Lesson(
             language_id="2",
+            topic_id="2",
             course_id="2",
             title="Crete",
             prev_lesson="4",
@@ -134,6 +159,7 @@ if __name__ == '__main__':
 
         lesson6 = Lesson(
             language_id="2",
+            topic_id="2",
             course_id="2",
             title="Santorini",
             prev_lesson="5",
@@ -144,6 +170,7 @@ if __name__ == '__main__':
 
         lesson7 = Lesson(
             language_id="3",
+            topic_id="1",
             course_id="3",
             title="Emergence of Pop Divas",
             prev_lesson="",
@@ -156,6 +183,7 @@ if __name__ == '__main__':
 
         lesson8 = Lesson(
             language_id="3",
+            topic_id="1",
             course_id="3",
             title="Influence of Reality TV Shows on Pop Music",
             prev_lesson="7",

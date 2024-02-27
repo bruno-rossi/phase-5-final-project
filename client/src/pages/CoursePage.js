@@ -32,6 +32,7 @@ function CoursePage() {
                 <button onClick={() => navigate(-1)}>Back</button>
                 <h1>{course.title}</h1>
                 <h2>{course.language.language_name}</h2>
+                <h2>{course.topic.topic_name}</h2>
                 <p># of lessons: {course.lessons.length}</p>
                 <ol>
                     {course.lessons.map(lesson => {

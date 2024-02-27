@@ -35,7 +35,7 @@ function Login() {
             })
             .then(newUser => {
                 setUser(newUser);
-                navigate("/")
+                navigate(-1)
             })
             .catch(error => {
                 console.log(error);

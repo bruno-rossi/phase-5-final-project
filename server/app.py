@@ -3,7 +3,7 @@
 from flask import request, session, make_response
 from config import app, db
 import os
-from models import User, Course, Lesson, UserCourse, UserLesson
+from models import User, Course, Language, Lesson, UserCourse, UserLesson, Topic, UserTopic
 
 @app.before_request
 def load_user():
@@ -177,3 +177,51 @@ def course_registration(course_id):
     # Return 404 error if course is not found:
     elif not course:
         return {"error": "Course not found."}, 404
+    
+# Get all languages
+@app.route('/languages/', endpoint='languages')
+def all_languages():
+    languages = [language.to_dict() for language in Language.query.all()]
+
+    return languages, 200
+
+# Get all topics
+@app.route('/topics/', endpoint='topics')
+def all_topics():
+    topics = [topic.to_dict() for topic in Topic.query.all()]
+
+    return topics, 200
+
+# Get, add or delete topics to a user through UserTopic
+@app.route('/users/<int:user_id>/topics/<int:topic_id>', methods=['GET', 'POST', 'DELETE'], endpoint='user-topics')
+def user_topics(user_id, topic_id):
+
+    user_topic = UserTopic.query.filter(UserTopic.topic_id == topic_id and UserTopic.user_id == user_id).first()
+
+    print(user_topic)
+
+    if request.method == 'GET':
+        if user_topic:
+            return user_topic.to_dict(), 200
+        else:
+            return {"error": "UserTopic not found"}, 404
+
+    if request.method == 'POST':
+        if user_topic:
+            return {"error": "User topic already exists"}, 409
+        else:
+            new_user_topic = UserTopic(
+                topic_id=request.get_json().get('topic_id'),
+                user_id=request.get_json().get('user_id')
+            )
+            db.session.add(new_user_topic)
+            db.session.commit()
+
+            return new_user_topic.to_dict(), 201
+        
+    if request.method == 'DELETE':
+        db.session.delete(user_topic)
+        db.session.commit()
+
+        return {}, 204
+        

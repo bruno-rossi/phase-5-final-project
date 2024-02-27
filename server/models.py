@@ -27,9 +27,10 @@ class User(db.Model, SerializerMixin):
 
     # Relationships:
     courses = db.relationship('UserCourse', back_populates='user')
+    topics = db.relationship('UserTopic', back_populates='user')
 
     # Serialization:
-    serialize_rules = ['-courses']
+    serialize_rules = ['-_password_hash', '-courses', '-topics.courses', '-topics.user']
 
     # Validations
     @validates('email')
@@ -70,14 +71,16 @@ class Course(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String)
     language_id = db.Column(db.Integer, db.ForeignKey('languages.id'))
+    topic_id = db.Column(db.Integer, db.ForeignKey('topics.id'))
 
     # Relationships:
     users = db.relationship('UserCourse', back_populates='course')
     language = db.relationship('Language', back_populates='courses')
+    topic = db.relationship('Topic', back_populates='courses')
     lessons = db.relationship('Lesson', back_populates='course')
 
     # Serialization:
-    serialize_rules = ['-language.courses', '-language.lessons', '-lessons.language', '-lessons.course', '-users']
+    serialize_rules = ['-language.courses', '-language.lessons', '-topic.courses', '-topic.lessons', '-lessons.language', '-lessons.course', '-users']
 
     # Validations:
     
@@ -110,6 +113,7 @@ class Lesson(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     language_id = db.Column(db.Integer, db.ForeignKey('languages.id'))
+    topic_id = db.Column(db.Integer, db.ForeignKey('topics.id'))
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
     title = db.Column(db.String)
     content = db.Column(db.String)
@@ -120,10 +124,11 @@ class Lesson(db.Model, SerializerMixin):
     # Relationships:
     language = db.relationship('Language', back_populates='lessons')
     course = db.relationship('Course', back_populates='lessons')
+    topic = db.relationship('Topic', back_populates='lessons')
     user_lessons = db.relationship('UserLesson', back_populates='lesson')
 
     # Serialization:
-    serialize_rules = ['-language.courses', '-language.lessons', '-course.language', '-course.lessons', '-user_lessons']
+    serialize_rules = ['-language.courses', '-language.lessons', '-topic.courses', '-topic.lessons', '-course.language', '-course.lessons', '-user_lessons']
 
     # Validations:
 
@@ -150,3 +155,44 @@ class Language(db.Model, SerializerMixin):
 
     def __repr__(self) -> str:
         return f"<Language {self.id}, language: {self.language_code}"
+    
+
+# ============= Topic =============
+class Topic(db.Model, SerializerMixin):
+    __tablename__ = 'topics'
+
+    id = db.Column(db.Integer, primary_key=True)
+    topic_name = db.Column(db.String, nullable=False)
+    topic_description = db.Column(db.String)
+
+    # Relationships:
+    courses = db.relationship('Course', back_populates='topic')
+    lessons = db.relationship('Lesson', back_populates='topic')
+    users = db.relationship('UserTopic', back_populates='topic')
+
+    # Serialization:
+    serialize_only = ['id', 'topic_name', 'topic_description']
+
+    # Validations:
+
+    def __repr__(self) -> str:
+        return f"<Topic {self.id}, {self.topic_name}>"
+    
+
+# ============= UserTopic =============
+class UserTopic(db.Model, SerializerMixin):
+    __tablename__ = 'users_topics'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    topic_id = db.Column(db.Integer, db.ForeignKey('topics.id'))
+
+    # Relationships:
+    user = db.relationship('User', back_populates='topics')
+    topic = db.relationship('Topic', back_populates='users')
+
+    # Serialization:
+    serialize_rules = ['-topic.courses', '-topic.lessons', '-topic.users', '-user.courses', '-user.topics']
+
+    def __repr__(self) -> str:
+        return f"<UserTopic id: {self.id} user {self.user_id} course {self.topic_id}"

@@ -31,6 +31,7 @@ function LessonPage() {
             <div><p><Link to={`/courses/${lesson.course_id}`}>{lesson.course_id}</Link> - {lesson.title}</p></div>
             <button>Course</button>
             <h1>{lesson.title}</h1>
+            {/* <h2>{lesson.topic.topic_name}</h2> */}
             <p>{lesson.content}</p>
             {lesson.prev_lesson ? <button onClick={() => navigate(`/lessons/${lesson.prev_lesson}`)}>Prev</button> : null}
             {lesson.next_lesson ? <button onClick={() => navigate(`/lessons/${lesson.next_lesson}`)}>Next</button> : null}
