@@ -20,7 +20,9 @@ def load_user():
         'logout',
         'check_session',
         'course',
-        'courses'
+        'courses',
+        'languages',
+        'topics'
     ]
 
     print(session.get('user_id'))
@@ -225,3 +227,20 @@ def user_topics(user_id, topic_id):
 
         return {}, 204
         
+# Get, add or delete topics to a user through UserTopic
+@app.route('/users/<int:user_id>/courses/', endpoint='user-courses')
+def user_courses(user_id):
+
+    user_courses = [user_course.to_dict()['course'] for user_course in UserCourse.query.filter(UserCourse.user_id == user_id)]
+
+    if user_courses:
+        return user_courses, 200
+    elif not user_courses:
+        return {"error": "No courses found for this user."}, 404
+    
+# @app.route('/users/<int:user_id>/recommended/', endpoint='recommended-courses')
+# def recommended_courses(user_id):
+
+#     user = User.query.filter(User.id == user_id).first()
+    
+#     rec_courses = []

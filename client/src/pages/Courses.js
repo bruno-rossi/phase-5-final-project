@@ -1,24 +1,29 @@
 import { useState, useEffect } from "react";
-import CourseCard from "../components/CourseCard";
+import { useOutletContext } from "react-router-dom";
 import CoursesSection from "../components/CoursesSection";
+import CoursesContainer from "../components/CoursesContainer";
+import FiltersBar from "../components/FiltersBar";
 
 function Courses() {
 
-    const [ courses, setCourses ] = useState([]);
+    const { user, setUser } = useOutletContext();
+    const [ allCourses, setAllCourses ] = useState([]);
+    const [ userCourses, setUserCourses ] = useState([]);
     const [ languages, setLanguages ] = useState([]);
     const [ topics, setTopics ] = useState([]);
 
-
+    console.log(userCourses);
+    
     useEffect(() => {
-        fetch("http://127.0.0.1:5555/courses", {
+        fetch("http://127.0.0.1:5555/courses/", {
             credentials: "include",
         })
         .then(response => response.json())
-        .then(courses => setCourses(courses))
+        .then(allCourses => setAllCourses(allCourses))
     }, [])
 
     useEffect(() => {
-        fetch("http://127.0.0.1:5555/languages", {
+        fetch("http://127.0.0.1:5555/languages/", {
             credentials: "include",
         })
         .then(response => response.json())
@@ -33,50 +38,49 @@ function Courses() {
         .then(topics => setTopics(topics))
     }, [])
 
+    useEffect(() => {
+        if (user) {
+            fetch(`http://127.0.0.1:5555/users/${user.id}/courses/`, {
+                credentials: "include",
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                }
+            })
+            .then(data => {
+                console.log(data);
+                setUserCourses(data);
+            })
+        }
+    }, [user])
+
+    // useEffect(() => {
+
+    //         allCourses.forEach(course => {
+    //             console.log(userCourses.includes(course))
+    //         })
+            
+    // }, [userCourses])
+    
     return (
         <div className="main">
-            <CoursesSection title={"Keep learning"} courses={courses} />
-            <CoursesSection title={"Recommended for you"} courses={courses} />
-            <div className="filters-container">
-                    {/* <h1>Filter by:</h1> */}
-                    <select>
-                        <option>Language</option>
-                        {languages.map(language => {
-                            return <option key={language.id} value={language.id}>{language.language_name}</option>
-                        })}
-                    </select>
-                    <select id="topic" onChange={event => console.log(event)}>
-                        <option>Topic</option>
-                        {topics.map(topic => {
-                            return <option key={topic.id} value={topic.id}>{topic.topic_name}</option>
-                        })}
-                    </select>
-                    <input type="text" placeholder="Search for a course..."></input>
-                </div>
-            <CoursesSection title={"All Courses"} courses={courses} />
+            { user && userCourses ? 
+            <>
+                <CoursesSection title={"Keep learning"} >
+                    <CoursesContainer courses={userCourses}></CoursesContainer>
+                </CoursesSection>
 
-            <h1>All Courses</h1>
-            <div className="filters-container">
-                {/* <h1>Filter by:</h1> */}
-                <select>
-                    <option>Language</option>
-                    {languages.map(language => {
-                        return <option key={language.id} value={language.id}>{language.language_name}</option>
-                    })}
-                </select>
-                <select id="topic" onChange={event => console.log(event)}>
-                    <option>Topic</option>
-                    {topics.map(topic => {
-                        return <option key={topic.id} value={topic.id}>{topic.topic_name}</option>
-                    })}
-                </select>
-                <input type="text" placeholder="Search for a course..."></input>
-            </div>
-            <div className="courses-container">{
-                courses.length !== 0 ? courses.map(course => {
-                    return <CourseCard key={course.id} course={course}>{course.title}</CourseCard>
-                }) : <div><h1>No courses yet.</h1><p>It looks like there are no courses to display! Try adjusting the filters.</p></div>
-            }</div>
+                {/* <CoursesSection title={"Recommended for you"}>
+                    <CoursesContainer courses={allCourses}></CoursesContainer>
+                </CoursesSection> */}
+            </>
+            : null }
+            
+            <CoursesSection title={"All Courses"}>
+                <FiltersBar languages={languages} topics={topics} setLanguages={setLanguages} setTopics={setTopics}></FiltersBar>
+                <CoursesContainer courses={allCourses}></CoursesContainer>
+            </CoursesSection>
         </div>
         
     )
