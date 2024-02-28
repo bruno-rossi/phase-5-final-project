@@ -1,5 +1,5 @@
 from app import app
-from models import db, User, Course, UserCourse, Lesson, Language, UserLesson, Topic, UserTopic
+from models import db, User, Course, UserCourse, Lesson, Language, UserLesson, Topic, UserTopic, Question, UserQuestion
 
 if __name__ == '__main__':
     with app.app_context():
@@ -7,11 +7,13 @@ if __name__ == '__main__':
         UserLesson.query.delete()
         UserCourse.query.delete()
         UserTopic.query.delete()
+        UserQuestion.query.delete()
         Language.query.delete()
         Topic.query.delete()
         User.query.delete()
         Course.query.delete()
         Lesson.query.delete()
+        Question.query.delete()
 
         db.session.commit()
 
@@ -206,6 +208,22 @@ if __name__ == '__main__':
         )
 
         db.session.add(user_course1)
+        db.session.commit()
+
+        print("Seeding questions...")
+
+        question1 = Question(
+            lesson_id=1,
+            question_text="Write a paragraph describing your favorite Bossa Nova song. What is it about? Who is the artist? When was it released? What do you like about it?"
+        )
+        question2 = Question(
+            lesson_id=2,
+            question_text="Write a paragraph describing your favorite Funk song. What is it about? Who is the artist? When was it released? What do you like about it?"
+        )
+
+        questions = [ question1, question2 ]
+
+        db.session.add_all(questions)
         db.session.commit()
 
         print("Done seeding!")

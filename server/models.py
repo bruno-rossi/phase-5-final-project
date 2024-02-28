@@ -28,6 +28,7 @@ class User(db.Model, SerializerMixin):
     # Relationships:
     courses = db.relationship('UserCourse', back_populates='user')
     topics = db.relationship('UserTopic', back_populates='user')
+    questions = db.relationship('UserQuestion', back_populates='user')
 
     # Serialization:
     serialize_rules = ['-_password_hash', '-courses', '-topics.courses', '-topics.user']
@@ -81,8 +82,6 @@ class Course(db.Model, SerializerMixin):
 
     # Serialization:
     serialize_rules = ['-language.courses', '-language.lessons', '-topic.courses', '-topic.lessons', '-lessons.language', '-lessons.course', '-users']
-
-    # Validations:
     
     def __repr__(self) -> str:
         return f"<Course {self.id}, language: {self.language}"
@@ -126,11 +125,10 @@ class Lesson(db.Model, SerializerMixin):
     course = db.relationship('Course', back_populates='lessons')
     topic = db.relationship('Topic', back_populates='lessons')
     user_lessons = db.relationship('UserLesson', back_populates='lesson')
+    questions = db.relationship('Question', back_populates='lesson')
 
     # Serialization:
-    serialize_rules = ['-language.courses', '-language.lessons', '-topic.courses', '-topic.lessons', '-course.language', '-course.lessons', '-user_lessons']
-
-    # Validations:
+    serialize_rules = ['-language.courses', '-language.lessons', '-topic.courses', '-topic.lessons', '-course.language', '-course.lessons', '-user_lessons', '-questions.lesson']
 
     def __repr__(self) -> str:
         return f"<Lesson {self.id}, language: {self.language}>"
@@ -151,8 +149,6 @@ class Language(db.Model, SerializerMixin):
     # Serialization:
     serialize_rules = ['-courses.language', '-courses.lessons', '-lessons.language', '-lessons.course']
 
-    # Validations:
-
     def __repr__(self) -> str:
         return f"<Language {self.id}, language: {self.language_code}"
     
@@ -172,8 +168,6 @@ class Topic(db.Model, SerializerMixin):
 
     # Serialization:
     serialize_only = ['id', 'topic_name', 'topic_description']
-
-    # Validations:
 
     def __repr__(self) -> str:
         return f"<Topic {self.id}, {self.topic_name}>"
@@ -196,3 +190,43 @@ class UserTopic(db.Model, SerializerMixin):
 
     def __repr__(self) -> str:
         return f"<UserTopic id: {self.id} user {self.user_id} course {self.topic_id}"
+
+# ============= Question =============
+class Question(db.Model, SerializerMixin):
+    __tablename__ = 'questions'
+
+    id = db.Column(db.Integer, primary_key=True)
+    lesson_id = db.Column(db.Integer, db.ForeignKey('lessons.id'))
+    question_text = db.Column(db.String, nullable=False)
+    prev_question = db.Column(db.Integer, db.ForeignKey('questions.id'))
+    next_question = db.Column(db.Integer, db.ForeignKey('questions.id'))
+
+    # Relationships:
+    lesson = db.relationship('Lesson', back_populates='questions')
+    users = db.relationship('UserQuestion', back_populates='question')
+
+    # Serialization:
+    serialize_rules = ['-lesson', '-user_questions']
+
+    def __repr__(self) -> str:
+        return f"<Question {self.id}>"
+    
+# ============= UserQuestion =============
+class UserQuestion(db.Model, SerializerMixin):
+    __tablename__ = 'users_questions'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'))
+    user_input = db.Column(db.String)
+    ai_feedback = db.Column(db.String)
+
+    # Relationships:
+    question = db.relationship('Question', back_populates='users')
+    user = db.relationship('User', back_populates='questions')
+
+    # Serialization:
+    serialize_rules = ['-question.users', '-user.questions']
+
+    def __repr__(self) -> str:
+        return f"<UserQuestion {self.id}>"

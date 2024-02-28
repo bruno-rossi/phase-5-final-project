@@ -1,5 +1,7 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import Question from "../components/Question";
+import LessonContent from "../components/LessonContent";
 
 function LessonPage() {
 
@@ -32,7 +34,11 @@ function LessonPage() {
             <button>Course</button>
             <h1>{lesson.title}</h1>
             {/* <h2>{lesson.topic.topic_name}</h2> */}
-            <p>{lesson.content}</p>
+            {/* <p>{lesson.content}</p> */}
+            <LessonContent content={lesson.content}></LessonContent>
+            {lesson.questions ? lesson.questions.map(question => {
+                return <Question key={question.id} question={question} lesson={lesson} />
+            }) : null}
             {lesson.prev_lesson ? <button onClick={() => navigate(`/lessons/${lesson.prev_lesson}`)}>Prev</button> : null}
             {lesson.next_lesson ? <button onClick={() => navigate(`/lessons/${lesson.next_lesson}`)}>Next</button> : null}
         </div>

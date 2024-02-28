@@ -3,7 +3,7 @@
 from flask import request, session, make_response
 from config import app, db
 import os
-from models import User, Course, Language, Lesson, UserCourse, UserLesson, Topic, UserTopic
+from models import User, Course, Language, Lesson, UserCourse, UserLesson, Topic, UserTopic, Question, UserQuestion
 
 @app.before_request
 def load_user():
@@ -244,3 +244,34 @@ def user_courses(user_id):
 #     user = User.query.filter(User.id == user_id).first()
     
 #     rec_courses = []
+    
+@app.route('/users/<int:user_id>/questions/<int:question_id>/', methods=['GET', 'POST', 'PATCH'], endpoint='user-question')
+def create_user_question(user_id, question_id):
+    
+    user_question = UserQuestion.query.filter(UserQuestion.user_id == user_id and UserQuestion.question_id == question_id).first()
+
+    if not user_question:
+        if request.method == 'POST':
+            new_user_question = UserQuestion(
+                user_id=user_id,
+                question_id=question_id,
+                user_input=request.get_json().get("user_input"),
+                ai_feedback=request.get_json().get("ai_feedback")
+            )
+            db.session.add(new_user_question)
+            db.session.commit()
+
+            return new_user_question.to_dict(), 200
+        
+        # Return 404 error if user question isn't found and method isn't POST:
+        return {"error": "User question not found"}, 404
+
+    if user_question:
+        if request.method == 'PATCH':
+            for attr in request.get_json():
+                setattr(user_question, attr, request.get_json()[attr])
+
+            db.session.add(user_question)
+            db.session.commit()
+
+            return user_question.to_dict(), 202
