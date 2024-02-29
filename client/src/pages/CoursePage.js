@@ -1,10 +1,15 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useOutletContext } from "react-router-dom";
 import LessonItem from "../components/LessonItem";
 
 function CoursePage() {
 
     // fetch course details here.
+    // 3 use cases:
+    // 1) No user - all lessons locked
+    // 2) User - not registered, all lessons locked
+    // 3) User registered, lessons locked or unlocked 
+    const { user, setUser } = useOutletContext();
     const [ course, setCourse ] = useState(null);
     const params = useParams();
     const navigate = useNavigate();
@@ -23,7 +28,27 @@ function CoursePage() {
         .then(course => setCourse(course))
     }, [])
 
-    console.log(course);
+    // useEffect(() => {
+    //     if (user) {
+    //         fetch(`http://127.0.0.1:5555/courses/<int:course_id>/registration/`, {
+    //             credentials: 'include'
+    //         })
+    //         .then(response => {
+    //             if (response.ok){
+    //                 return response.json()
+    //             }
+    //         })
+    //         .then(registration => {
+    //             console.log(registration);
+    //             navigate(`/lessons/${course.lessons[0].id}`)
+    //         })
+    //     }
+
+    // }, [user])
+
+    function createCourseRegistration() {
+        return
+    }
 
     return (
         <div className="main">

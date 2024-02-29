@@ -144,18 +144,18 @@ def get_lesson_by_id(id):
 @app.route('/courses/<int:course_id>/registration', methods=['GET', 'POST'], endpoint='course-registration')
 def course_registration(course_id):
 
-    # Check if user is already registered:
     user_id = session.get('user_id')
 
-    user_course = UserCourse.query.filter(UserCourse.course_id == course_id and UserCourse.user_id == user_id).first()
+    # Check if user is already registered:
+    user_course = UserCourse.query.filter(UserCourse.course_id == course_id).filter(UserCourse.user_id == user_id).first()
 
     if user_course:
+        if request.method == 'GET':
+            return user_course.to_dict(), 200
+        
         return {"error": "User is already registered"}, 409
-    
-    # Find the course in the db:
-    course = Course.query.filter(Course.id == course_id).first()
 
-    if course:
+    elif not user_course:
         if request.method == 'POST':
 
             new_user_course = UserCourse(
@@ -176,9 +176,9 @@ def course_registration(course_id):
 
             return new_user_course.to_dict(), 200
     
-    # Return 404 error if course is not found:
-    elif not course:
-        return {"error": "Course not found."}, 404
+        # Return 404 error if user course is not found:
+        else:
+            return {"error": "User course not found."}, 404
     
 # Get all languages
 @app.route('/languages/', endpoint='languages')
@@ -248,7 +248,9 @@ def user_courses(user_id):
 @app.route('/users/<int:user_id>/questions/<int:question_id>/', methods=['GET', 'POST', 'PATCH'], endpoint='user-question')
 def create_user_question(user_id, question_id):
     
-    user_question = UserQuestion.query.filter(UserQuestion.user_id == user_id and UserQuestion.question_id == question_id).first()
+    user_question = UserQuestion.query.filter(UserQuestion.question_id == question_id).filter(UserQuestion.user_id == user_id).first()
+
+    print(user_question)
 
     if not user_question:
         if request.method == 'POST':
@@ -267,6 +269,9 @@ def create_user_question(user_id, question_id):
         return {"error": "User question not found"}, 404
 
     if user_question:
+        if request.method == 'GET':
+            return user_question.to_dict(), 200
+        
         if request.method == 'PATCH':
             for attr in request.get_json():
                 setattr(user_question, attr, request.get_json()[attr])
