@@ -141,7 +141,7 @@ def get_lesson_by_id(id):
     else:
         return {"error": "Lesson not found."}, 404
 
-@app.route('/courses/<int:course_id>/registration', methods=['GET', 'POST'], endpoint='course-registration')
+@app.route('/courses/<int:course_id>/registration/', methods=['GET', 'POST'], endpoint='course-registration')
 def course_registration(course_id):
 
     user_id = session.get('user_id')
@@ -168,7 +168,10 @@ def course_registration(course_id):
 
             course_lessons = []
             for lesson in new_user_course.course.lessons:
-                user_lesson = UserLesson(user_course_id=new_user_course.course.id, lesson_id=lesson.id)
+                if not lesson.prev_lesson:
+                    user_lesson = UserLesson(user_course_id=new_user_course.course.id, lesson_id=lesson.id, is_unlocked=True)
+                else:
+                    user_lesson = UserLesson(user_course_id=new_user_course.course.id, lesson_id=lesson.id)
                 course_lessons.append(user_lesson)
 
             db.session.add_all(course_lessons)

@@ -11,6 +11,7 @@ function CoursePage() {
     // 3) User registered, lessons locked or unlocked 
     const { user, setUser } = useOutletContext();
     const [ course, setCourse ] = useState(null);
+    const [ userCourse, setUserCourse ] = useState(null);
     const params = useParams();
     const navigate = useNavigate();
 
@@ -28,32 +29,58 @@ function CoursePage() {
         .then(course => setCourse(course))
     }, [])
 
-    // useEffect(() => {
-    //     if (user) {
-    //         fetch(`http://127.0.0.1:5555/courses/<int:course_id>/registration/`, {
-    //             credentials: 'include'
-    //         })
-    //         .then(response => {
-    //             if (response.ok){
-    //                 return response.json()
-    //             }
-    //         })
-    //         .then(registration => {
-    //             console.log(registration);
-    //             navigate(`/lessons/${course.lessons[0].id}`)
-    //         })
-    //     }
+    useEffect(() => {
 
-    // }, [user])
+        if (user && course) {
+            fetch(`http://127.0.0.1:5555/courses/${course.id}/registration/`, {
+                credentials: 'include'
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                }
+            })
+            .then(registration => {
+                setUserCourse(registration);
+            })
+        }
+
+    }, [user])
 
     function createCourseRegistration() {
-        return
+
+        if (user) {
+            fetch(`http://127.0.0.1:5555/courses/${course.id}/registration/`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user_id: user.id,
+                    course_id: course.id
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                }
+            })
+            .then(new_registration => {
+                setUserCourse(new_registration);
+                navigate(`/lessons/${course.lessons[0].id}`)
+            })
+        }
     }
 
-    return (
-        <div className="main">
-            {course ? 
-            <>
+    function buildPage(course, userCourse) {
+
+        if (!course) {
+            return <h1>Loading...</h1>;
+        }
+        else if (course && !userCourse) {
+            return <>
                 <button onClick={() => navigate(-1)}>Back</button>
                 <h1>{course.title}</h1>
                 <h2>{course.language.language_name}</h2>
@@ -61,13 +88,33 @@ function CoursePage() {
                 <p># of lessons: {course.lessons.length}</p>
                 <ol>
                     {course.lessons.map(lesson => {
-                        return <LessonItem key={lesson.id} lesson={lesson}></LessonItem>
+                        return <li key={lesson.id} className="lesson-item-locked">{lesson.title}</li>
                     })}
                 </ol>
-                <button onClick={() => navigate(`/lessons/${course.lessons[0].id}`)}>Start course</button>
-            </> :
-            <h1>Loading...</h1>
-            }
+                <button onClick={() => {!user ? navigate('/login') : createCourseRegistration()}}>Start course</button>
+                </>
+        } else {
+            return <>
+                <button onClick={() => navigate(-1)}>Back</button>
+                <h1>{course.title}</h1>
+                <h2>{course.language.language_name}</h2>
+                <h2>{course.topic.topic_name}</h2>
+                <p># of lessons: {course.lessons.length}</p>
+                <ol>
+                    {userCourse.user_lessons.map(user_lesson => {
+                        console.log(user_lesson);
+                        return <LessonItem key={user_lesson['lesson'].id} user_lesson={user_lesson}></LessonItem>
+                    })}
+                </ol>
+                <button onClick={() => createCourseRegistration()}>Start course</button>
+                </>
+        }
+        
+    }
+
+    return (
+        <div className="main">
+            {buildPage(course, userCourse)}
         </div>
     )
 }
