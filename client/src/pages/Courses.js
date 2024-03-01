@@ -11,8 +11,10 @@ function Courses() {
     const [ userCourses, setUserCourses ] = useState([]);
     const [ languages, setLanguages ] = useState([]);
     const [ topics, setTopics ] = useState([]);
-
-    console.log(userCourses);
+    const [ languageFilter, setLanguageFilter ] = useState("");
+    const [ topicFilter, setTopicFilter ] = useState("");
+    const [ filteredCourses, setFilteredCourses ] = useState([]);
+    const [ isFiltered, setIsFiltered ] = useState(false);
     
     useEffect(() => {
         fetch("http://127.0.0.1:5555/courses/", {
@@ -49,19 +51,45 @@ function Courses() {
                 }
             })
             .then(data => {
-                console.log(data);
+                // console.log(data);
                 setUserCourses(data);
             })
         }
     }, [user])
 
-    // useEffect(() => {
+    function filterByLanguage(courses) {
+        const filteredArray = courses.filter(course => (course.language.language_name === languageFilter))
+        setFilteredCourses(filteredArray);
+        return filteredArray;
+    }
 
-    //         allCourses.forEach(course => {
-    //             console.log(userCourses.includes(course))
-    //         })
-            
-    // }, [userCourses])
+    function filterByTopic(courses) {
+        const filteredArray = courses.filter(course => (course.topic.topic_name === topicFilter))
+        setFilteredCourses(filteredArray);
+        return filteredArray;
+    }
+
+    useEffect(() => {
+        if (languageFilter === "" && topicFilter === "") {
+            setFilteredCourses(allCourses);
+        } else if (languageFilter !== "" && topicFilter === "") {
+            filterByLanguage(allCourses);
+        } else if (languageFilter === "" && topicFilter !== "") {
+            filterByTopic(allCourses);
+        } else if (languageFilter !== "" && topicFilter !== "") {
+            filterByLanguage(filterByTopic(allCourses));
+        }
+
+    }, [languageFilter, topicFilter, allCourses])
+
+    // useEffect(() => {
+    //     if (topicFilter === "") {
+    //         setFilteredCourses(allCourses);
+    //     } else {
+    //         const filteredArray = allCourses.filter(course => (course.language.language_name === languageFilter))
+    //         setFilteredCourses(filteredArray);
+    //     }
+    // }, [languageFilter, allCourses])
     
     return (
         <div className="main">
@@ -78,8 +106,8 @@ function Courses() {
             : null }
             
             <CoursesSection title={"All Courses"}>
-                <FiltersBar languages={languages} topics={topics} setLanguages={setLanguages} setTopics={setTopics}></FiltersBar>
-                <CoursesContainer courses={allCourses}></CoursesContainer>
+                <FiltersBar languages={languages} topics={topics} setLanguageFilter={setLanguageFilter} setTopicFilter={setTopicFilter} ></FiltersBar>
+                <CoursesContainer courses={filteredCourses}></CoursesContainer>
             </CoursesSection>
         </div>
         

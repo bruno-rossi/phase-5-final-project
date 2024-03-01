@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 function CourseCard({ course }) {
 
-    console.log(course);
+    // console.log(course);
 
     return (
         <>{course ? (

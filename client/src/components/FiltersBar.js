@@ -1,24 +1,22 @@
 import { useEffect } from "react";
 
-function FiltersBar({ languages, topics, setLanguages, setTopics}) {
+function FiltersBar({ languages, topics, setLanguageFilter, setTopicFilter}) {
 
     
     return (
         <div className="filters-container">
-                    {/* <h1>Filter by:</h1> */}
-                    <select>
-                        <option>Language</option>
+                    <select id="language-filter" onChange={event => setLanguageFilter(event.target.value)}>
+                        <option value="">Language</option>
                         {languages.length == 0 ? null : languages.map(language => {
-                            return <option key={language.id} value={language.id}>{language.language_name}</option>
+                            return <option key={language.id} value={language.language_name}>{language.language_name}</option>
                         })}
                     </select>
-                    <select id="topic" onChange={event => console.log(event)}>
-                        <option>Topic</option>
+                    <select id="topic-filter" onChange={event => setTopicFilter(event.target.value)}>
+                        <option value="">Topic</option>
                         {topics.length == 0 ? null : topics.map(topic => {
-                            return <option key={topic.id} value={topic.id}>{topic.topic_name}</option>
+                            return <option key={topic.id} value={topic.topic_name}>{topic.topic_name}</option>
                         })}
                     </select>
-                    <input type="text" placeholder="Search for a course..."></input>
             </div>
     )
 }

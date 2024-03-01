@@ -59,7 +59,7 @@ function Question({ question, lesson }) {
             })
         })
         .then(response => response.json())
-        .then(message => setAiResponse(message.choices[0].message.content))
+        .then(message => {console.log(message); setAiResponse(message.choices[0].message.content)})
     }
 
     function handleSave() {
