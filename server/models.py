@@ -71,6 +71,8 @@ class Course(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String)
+    description = db.Column(db.String)
+    image = db.Column(db.String)
     language_id = db.Column(db.Integer, db.ForeignKey('languages.id'))
     topic_id = db.Column(db.Integer, db.ForeignKey('topics.id'))
 
@@ -186,7 +188,7 @@ class UserTopic(db.Model, SerializerMixin):
     topic = db.relationship('Topic', back_populates='users')
 
     # Serialization:
-    serialize_rules = ['-topic.courses', '-topic.lessons', '-topic.users', '-user.courses', '-user.topics']
+    serialize_rules = ['-topic.courses', '-topic.lessons', '-topic.users', '-user.courses', '-user.topics', '-user_id']
 
     def __repr__(self) -> str:
         return f"<UserTopic id: {self.id} user {self.user_id} course {self.topic_id}"

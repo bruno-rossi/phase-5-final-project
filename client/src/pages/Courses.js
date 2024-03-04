@@ -95,7 +95,7 @@ function Courses() {
         <div className="main">
             { user && userCourses ? 
             <>
-                <CoursesSection title={"Keep learning"} >
+                <CoursesSection id="keep-learning" title={"Keep learning"} >
                     <CoursesContainer courses={userCourses}></CoursesContainer>
                 </CoursesSection>
 
@@ -105,7 +105,7 @@ function Courses() {
             </>
             : null }
             
-            <CoursesSection title={"All Courses"}>
+            <CoursesSection id={"all-courses"} title={"All Courses"}>
                 <FiltersBar languages={languages} topics={topics} setLanguageFilter={setLanguageFilter} setTopicFilter={setTopicFilter} ></FiltersBar>
                 <CoursesContainer courses={filteredCourses}></CoursesContainer>
             </CoursesSection>

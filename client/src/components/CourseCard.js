@@ -8,8 +8,11 @@ function CourseCard({ course }) {
         <>{course ? (
                 <Link to={`/courses/${course.id}`}>
                     <div className="course-card">
+                        <div className="card-img-div">
+                            <img src={course.image}></img>
+                        </div>
+                        <h5>{course.language.language_name}</h5>
                         <h1>{course.title}</h1>
-                        <h2>{course.language.language_name}</h2>
                         <p># of lessons: {course.lessons.length}</p>
                     </div>
                 </Link>

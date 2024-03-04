@@ -9,9 +9,10 @@ function Question({ question, lesson }) {
     const [ aiResponse, setAiResponse] = useState("");
 
     const { user, setUser } = useOutletContext();
+    
     console.log(question);
 
-    const systemMessageContent = `You are a teacher of ${lesson.language.language_name}. When given an input, you will review the input in ${lesson.language.language_name} for grammar and spelling. Please respond with the corrected input, and then, in a new line, list the corrections you made. Please add a new line for each correction.`
+    const systemMessageContent = `You are a teacher of ${lesson.language.language_name}. When given an input, you will review the input in ${lesson.language.language_name} for grammar and spelling. Please respond with the corrected input, and then, in a new line, list the corrections you made under "Corrections:". Please add a new line for each correction.`
 
     useEffect(() => {
 
@@ -108,10 +109,10 @@ function Question({ question, lesson }) {
         if (aiResponse === "Loading") {
             return <p>Loading...</p>;
         } else {
-            return <div>
+            return <div className="ai-feedback">
                 {formatAiCorrection(aiResponse)}
                 {formatAiFeedback(aiResponse)}
-                <button onClick={handleSave}>Save</button>
+                <button onClick={handleSave}>Submit</button>
             </div>
         }
     }
@@ -137,6 +138,8 @@ function Question({ question, lesson }) {
 
     function formatAiFeedback(aiResponse) {
 
+        console.log(aiResponse);
+
         if (aiResponse === "Loading...") {
             return
         } else {
@@ -149,7 +152,7 @@ function Question({ question, lesson }) {
                     if (line === "\n") {
                         return
                     } else {
-                        return <li>{`${line};`}</li>
+                        return <li>{`${line}`}</li>
                     };
             })}</ul>
         }
@@ -158,11 +161,10 @@ function Question({ question, lesson }) {
 
     return (
         <div className='question-container'>
-            <h3>{question.question_text}</h3>
-
             <form className="question-form" onSubmit={event => handleSubmit(event)}>
+                <h3>{question.question_text}</h3>
                 <textarea value={userInput} onChange={event => setUserInput(event.target.value)}></textarea>
-                <input type="submit" />
+                <input type="submit" value={"Save"} />
             </form>
 
             {/* {aiResponse ? <div><p>{aiResponse}</p><button onClick={handleSave}>Save</button></div> : null} */}

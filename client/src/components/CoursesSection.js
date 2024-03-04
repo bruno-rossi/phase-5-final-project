@@ -1,7 +1,7 @@
 
-function CoursesSection({ title, children }) {
+function CoursesSection({ id, title, children }) {
     return (
-        <div className="courses-section">
+        <div id={id} className="courses-section">
             <h1>{title}</h1>
             {children}
         </div>

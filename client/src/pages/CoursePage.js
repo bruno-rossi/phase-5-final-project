@@ -45,7 +45,7 @@ function CoursePage() {
             })
         }
 
-    }, [user])
+    }, [user, course])
 
     function createCourseRegistration() {
 
@@ -81,40 +81,54 @@ function CoursePage() {
         }
         else if (course && !userCourse) {
             return <>
-                <button onClick={() => navigate(-1)}>Back</button>
-                <h1>{course.title}</h1>
-                <h2>{course.language.language_name}</h2>
-                <h2>{course.topic.topic_name}</h2>
-                <p># of lessons: {course.lessons.length}</p>
-                <ol>
-                    {course.lessons.map(lesson => {
-                        return <li key={lesson.id} className="lesson-item-locked">{lesson.title}</li>
-                    })}
-                </ol>
-                <button onClick={() => {!user ? navigate('/login') : createCourseRegistration()}}>Start course</button>
+                <div className="cp left-side">
+                    <h1>{course.title}</h1>
+                    <div className="cp-img-div"><img src={course.image}/></div>
+                    <h5>{course.language.language_name} · {course.topic.topic_name}</h5>
+                    <p>{course.description}</p>
+                </div>
+                <div className="cp right-side">
+                    <h1>Lessons: {course.lessons.length}</h1>
+                    <ul className="lessons-list">
+                        {course.lessons.map(lesson => {
+                            return <li key={lesson.id} className="lesson-item locked"><span className="lock-emoji">🔒</span>{lesson.title}</li>
+                        })}
+                    </ul>
+                </div>
                 </>
-        } else {
+        } else if (userCourse) {
             return <>
-                <button onClick={() => navigate(-1)}>Back</button>
-                <h1>{course.title}</h1>
-                <h2>{course.language.language_name}</h2>
-                <h2>{course.topic.topic_name}</h2>
-                <p># of lessons: {course.lessons.length}</p>
-                <ol>
-                    {userCourse.user_lessons.map(user_lesson => {
-                        console.log(user_lesson);
-                        return <LessonItem key={user_lesson['lesson'].id} user_lesson={user_lesson}></LessonItem>
-                    })}
-                </ol>
-                <button onClick={() => createCourseRegistration()}>Start course</button>
+                    <div className="cp left-side">
+                        <h1>{course.title}</h1>
+                        <div className="cp-img-div"><img src={course.image}/></div>
+                        <h5>{course.language.language_name} · {course.topic.topic_name}</h5>
+                        <p>{course.description}</p>
+                    </div>
+                    <div className="cp right-side">
+                        <h1>Lessons: {course.lessons.length}</h1>
+                        <ul className="lessons-list">
+                            {userCourse.user_lessons.map(user_lesson => {
+                                console.log(user_lesson);
+                                return <LessonItem key={user_lesson['lesson'].id} user_lesson={user_lesson}></LessonItem>
+                            })}
+                        </ul>
+                    </div>
+                    
                 </>
         }
-        
     }
 
     return (
         <div className="main">
-            {buildPage(course, userCourse)}
+            <div className="breadcrumbs">
+                <button className="back-button" onClick={() => navigate(-1)}>Back</button>
+            </div>
+            <div className="content-container">
+                {buildPage(course, userCourse)}
+            </div>
+            <div className="bottom-cta">
+                <button onClick={() => {!user ? navigate('/login') : createCourseRegistration()}}>{userCourse ? "Keep learning" : "Start course"}</button>
+            </div>
         </div>
     )
 }

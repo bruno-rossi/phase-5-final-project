@@ -8,9 +8,9 @@ function LessonItem({ course, user_lesson }) {
         <>
         {user_lesson['is_unlocked'] ? 
             <Link to={`/lessons/${user_lesson['lesson'].id}`}>
-                <li className="lesson-item-unlocked">{user_lesson['lesson'].title}</li>
+                <li className="lesson-item unlocked"><span className="book-emoji">📖</span>{user_lesson['lesson'].title}</li>
             </Link> : 
-            <li className="lesson-item-locked">{user_lesson['lesson'].title}</li>
+            <li className="lesson-item locked"><span className="lock-emoji">🔒</span> {user_lesson['lesson'].title}</li>
         }
         </>
         

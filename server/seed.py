@@ -79,18 +79,24 @@ if __name__ == '__main__':
         print("Seeding courses...")
         course1_portuguese = Course(
             title="Brazilian Music",
+            description="Learn about different genres in Brazilian Music, the history and culture behind them.",
+            image="https://langlittravel.files.wordpress.com/2020/09/brazil-carnival-character-dance-samba-set-vector-23364787.jpg",
             language_id="1",
             topic_id="1"
         )
 
         course1_greek = Course(
             title="Greek Islands",
+            description="Explore the history and geography of the Greek Islands.",
+            image="https://img.freepik.com/free-vector/hand-drawn-mykonos-illustration_52683-85201.jpg",
             language_id="2",
             topic_id="2"
         )
 
         course1_english = Course(
             title="2000s Pop Music",
+            description="Learn about the pop music phenomenon post Y2K.",
+            image="https://upload.wikimedia.org/wikipedia/commons/f/f8/Pop_Music_Barnstar.png",
             language_id="3",
             topic_id="1"
         )
