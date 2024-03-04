@@ -27,9 +27,9 @@ body {
 /* Building blocks */
 .main {
     width: 100%;
-    height: 100%;
     min-height: 100%;
     background-color: #F8F9F7;
+    margin-bottom: auto;
     /* padding-top: 5vh; */
     /* padding-bottom: 5vh; */
 }
@@ -279,7 +279,7 @@ body {
     font-weight: normal;
     font-size: 1em;
     display: block;
-    margin: 0 auto;
+    margin: 1em auto;
 }
 
 @media (max-width: 750px) {
@@ -287,15 +287,13 @@ body {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
-        gap: 3%;
+        gap: 2em;
         width: 100vw;
+        padding: 0;
     }
-    .left-side {
+    .left-side, .right-side {
         min-width: 100%;
-    }
-    .right-side {
-        width: 100%;
-        min-width: 100%;
+        padding: 0 1em;
     }
     .cp-img-div {
         padding: 1em;
@@ -303,6 +301,16 @@ body {
     .cp-img-div img {
         max-width: 80%;
     }
+    .lesson-item {
+        width: 90%;
+        min-width: 250px;
+        margin: 1em auto;
+    }
+    .lp textarea {
+        width: 90%;
+        font-size: 1em;
+    }
+    
 
 }
 
@@ -390,7 +398,7 @@ body {
 #footer {
     width: 100%;
     height: fit-content;
-    position: relative;
+    position: absolute;
     margin-top: auto;
     left: 0;
     bottom: 0;
@@ -404,7 +412,7 @@ body {
     margin: 0;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 500px), (max-height: 700px) {
     #footer {
         position: relative;
     }
@@ -414,7 +422,7 @@ body {
 
 .login-form {
     width: 50%;
-    max-height: 80%;
+    min-height: 100%;
     margin: 5% auto ;
     background-color: #4A4A6A;
     padding: 1px;
