@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import parse from 'html-react-parser';
 import apiKey from "../env";
 import { useOutletContext } from "react-router-dom";
 
@@ -12,7 +13,11 @@ function Question({ question, lesson }) {
     
     console.log(question);
 
-    const systemMessageContent = `You are a teacher of ${lesson.language.language_name}. When given an input, you will review the input in ${lesson.language.language_name} for grammar and spelling. Please respond with the corrected input, and then, in a new line, list the corrections you made under "Corrections:". Please add a new line for each correction.`
+    const systemMessageContent = `You are a teacher of ${lesson.language.language_name}. You are reviewing your student's written texts in this language. When given an input, you will review the input in ${lesson.language.language_name} for grammar, spelling, and style. 
+    
+    Please respond with the corrected input in HTML inside <p> tags. Make sure to provide a new paragraph tag for each paragraph in the input! 
+    
+    Inside the p tag(s), find the mistakes and wrap them in a <span className="mistakes"> HTML tag. And then, in a new line, list the corrections you made under an HTML unordered list: "<ul><p>Corrections:</p></ul>". Please add a new line for each correction with its corresponding <li> tag. If there are no mistakes to correct, please respond with: "<p>Congratulations! Your response looks great!"</p>"`
 
     useEffect(() => {
 
@@ -104,71 +109,16 @@ function Question({ question, lesson }) {
         }
     }
 
-    function formatAiResponse(aiResponse) {
-
-        if (aiResponse === "Loading") {
-            return <p>Loading...</p>;
-        } else {
-            return <div className="ai-feedback">
-                {formatAiCorrection(aiResponse)}
-                {formatAiFeedback(aiResponse)}
-                <button onClick={handleSave}>Submit</button>
-            </div>
-        }
-    }
-
-    function formatAiCorrection(aiResponse) {
-
-        {
-            const responseArray = aiResponse.split("Corrections:");
-
-            const correctedInputArr = responseArray[0].split(/\r?\n/).map(paragraph => {
-                if (paragraph === "") {
-                    return
-                } else {
-                    return <p>{paragraph}</p>
-                }
-            })
-
-            console.log(responseArray);
-
-            return correctedInputArr
-        }
-    }
-
-    function formatAiFeedback(aiResponse) {
-
-        console.log(aiResponse);
-
-        if (aiResponse === "Loading...") {
-            return
-        } else {
-            const responseArray = aiResponse.split("Corrections:");
-            const bulletPoints = responseArray[1].split("\n");
-    
-            console.log(bulletPoints);
-            
-            return <ul>Corrections: {bulletPoints.map(line => {
-                    if (line === "\n") {
-                        return
-                    } else {
-                        return <li>{`${line}`}</li>
-                    };
-            })}</ul>
-        }
-    }
-
 
     return (
         <div className='question-container'>
             <form className="question-form" onSubmit={event => handleSubmit(event)}>
                 <h3>{question.question_text}</h3>
                 <textarea value={userInput} onChange={event => setUserInput(event.target.value)}></textarea>
-                <input type="submit" value={"Save"} />
+                <input type="submit" value={"Get AI feedback"} />
             </form>
 
-            {/* {aiResponse ? <div><p>{aiResponse}</p><button onClick={handleSave}>Save</button></div> : null} */}
-            {aiResponse ? formatAiResponse(aiResponse) : null}
+            {aiResponse ? <div className="ai-feedback">{parse(aiResponse)}<button onClick={handleSave}>Save</button></div> : null}
         </div>
     )
 }

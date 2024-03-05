@@ -102,6 +102,8 @@ body {
     border-radius: 10px;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 1em 1em -0.7em #4A4A6A;
+    margin-bottom: 2em;
 }
 .card-img-div img {
     height: 100%;
@@ -261,9 +263,6 @@ body {
 }
 
 /* Question */
-.question-container {
-
-}
 .question-form {
     display: flex;
     flex-direction: column;
@@ -310,8 +309,9 @@ body {
         width: 90%;
         font-size: 1em;
     }
-    
-
+}
+.mistakes {
+    color: #D24E46;
 }
 
 /* NavBar */

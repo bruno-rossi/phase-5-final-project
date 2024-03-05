@@ -1,5 +1,6 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import parse from 'html-react-parser';
 import Question from "../components/Question";
 import LessonContent from "../components/LessonContent";
 
