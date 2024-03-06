@@ -1,13 +1,16 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import parse from 'html-react-parser';
 import Question from "../components/Question";
 import LessonContent from "../components/LessonContent";
 
 function LessonPage() {
 
     const [ lesson, setLesson ] = useState({});
-    console.log(lesson)
+    const [ userCourse, setUserCourse ] = useState(null); 
+    const [ userLesson, setUserLesson ] = useState(null); 
+    const [ nextLesson, setNextLesson ] = useState(null);
+    
+    console.log(nextLesson);
 
     const params = useParams();
     const navigate = useNavigate();
@@ -27,7 +30,71 @@ function LessonPage() {
             }
         })
         .then(lesson => setLesson(lesson))
-    }, [params]);
+    }, [params.lesson_id]);
+
+    useEffect(() => {
+
+        if (lesson.course_id) {
+            fetch(`http://127.0.0.1:5555/courses/${lesson.course_id}/registration/`, {
+                credentials: 'include'
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                }
+            })
+            .then(data => {console.log(data); setUserCourse(data)})
+        }
+
+    }, [lesson]);
+
+    useEffect(() => {
+        if (userCourse) {
+            fetch(`http://127.0.0.1:5555/user-courses/${userCourse.id}/user-lessons/${params.lesson_id}/`, {
+                credentials: 'include'
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                }
+            })
+            .then(data => { console.log(data); setUserLesson(data);})
+        }
+    }, [userCourse])
+
+    useEffect(() => {
+        if (userCourse && lesson.next_lesson) {
+            fetch(`http://127.0.0.1:5555/user-courses/${userCourse.id}/user-lessons/${lesson.next_lesson}/`, {
+                credentials: 'include'
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                }
+            })
+            .then(data => { if (data.is_unlocked) {setNextLesson(data.lesson_id); console.log(data.is_unlocked)}})
+        }
+    }, [userLesson])
+
+    function unlockNext() {
+        fetch(`http://127.0.0.1:5555/user-courses/${userCourse.id}/user-lessons/${userLesson.lesson.next_lesson}/`, {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                is_unlocked: 1
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json()
+            }
+        })
+        .then(data => { setNextLesson(data.lesson_id)})
+    }
 
     return (
         <div className="main">
@@ -42,13 +109,13 @@ function LessonPage() {
                 {/* <p>{lesson.content}</p> */}
                 <div className="lp right-side">
                     {lesson.questions ? lesson.questions.map(question => {
-                        return <Question key={question.id} question={question} lesson={lesson} />
+                        return <Question key={question.id} question={question} lesson={lesson} unlockNext={unlockNext} />
                     }) : null}
                 </div>
             </div>
             <div className="bottom-cta">
                 {lesson.prev_lesson ? <button className="button-prev" onClick={() => navigate(`/lessons/${lesson.prev_lesson}`)}>Prev</button> : null}
-                {lesson.next_lesson ? <button className="button-next" onClick={() => navigate(`/lessons/${lesson.next_lesson}`)}>Next</button> : null}
+                {nextLesson ? <button className="button-next" onClick={() => {setNextLesson(null); navigate(`/lessons/${lesson.next_lesson}`)}}>Next</button> : null}
             </div>
         </div>
     )

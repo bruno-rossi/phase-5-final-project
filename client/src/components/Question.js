@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import parse from 'html-react-parser';
 import apiKey from "../env";
 import { useOutletContext } from "react-router-dom";
+import toast, { Toaster } from 'react-hot-toast';
 
-function Question({ question, lesson }) {
+function Question({ question, lesson, unlockNext }) {
 
     const [ userQuestion, setUSerQuestion ] = useState({});
     const [ userInput, setUserInput ] = useState("");
@@ -17,7 +18,7 @@ function Question({ question, lesson }) {
     
     Please respond with the corrected input in HTML inside <p> tags. Make sure to provide a new paragraph tag for each paragraph in the input! 
     
-    Inside the p tag(s), find the mistakes and wrap them in a <span className="mistakes"> HTML tag. And then, in a new line, list the corrections you made under an HTML unordered list: "<ul><p>Corrections:</p></ul>". Please add a new line for each correction with its corresponding <li> tag. If there are no mistakes to correct, please respond with: "<p>Congratulations! Your response looks great!"</p>"`
+    Inside the p tag(s), find the mistakes and wrap them in a <span className="mistakes"> HTML tag. And then, in a new line, list the corrections you made under an HTML unordered list: "<ul><p>Corrections:</p></ul>". Please add a new line for each correction with its corresponding <li></li> tag. If there are no mistakes to correct, please respond with: "<p>Congratulations! Your response looks great!"</p>"`
 
     useEffect(() => {
 
@@ -65,7 +66,10 @@ function Question({ question, lesson }) {
             })
         })
         .then(response => response.json())
-        .then(message => {console.log(message); setAiResponse(message.choices[0].message.content)})
+        .then(message => {
+            console.log(message); 
+            setAiResponse(message.choices[0].message.content)
+        })
     }
 
     function handleSave() {
@@ -85,6 +89,11 @@ function Question({ question, lesson }) {
                     ai_feedback: aiResponse
                 })
             })
+            .then(response => {
+                if (response.ok) {
+                    toast.success("Lesson saved!");
+                }
+            })
 
         } else {
             fetch(`http://127.0.0.1:5555/users/${user.id}/questions/${question.id}/`, {
@@ -103,7 +112,8 @@ function Question({ question, lesson }) {
             })
             .then(response => { 
                 if (response.ok) {
-                    console.log("saved")
+                    toast.success("Lesson saved!");
+                    unlockNext();
                 }
             })
         }
@@ -112,9 +122,22 @@ function Question({ question, lesson }) {
 
     return (
         <div className='question-container'>
+            <Toaster toastOptions={
+                            {duration: 3000,
+                            success: {
+                                style: {
+                                    background: '#79ad5b',
+                                    color: '#F8F9F7'
+                                }
+                            },
+                            error: {
+                                style: {
+                                    background: '#D24E46',
+                                    color: '#F8F9F7'}
+                            }}}></Toaster>
             <form className="question-form" onSubmit={event => handleSubmit(event)}>
                 <h3>{question.question_text}</h3>
-                <textarea value={userInput} onChange={event => setUserInput(event.target.value)}></textarea>
+                <textarea lang={lesson.language.language_code} value={userInput} onChange={event => setUserInput(event.target.value)} required></textarea>
                 <input type="submit" value={"Get AI feedback"} />
             </form>
 

@@ -107,6 +107,7 @@ function CoursePage() {
                     <div className="cp right-side">
                         <h1>Lessons: {course.lessons.length}</h1>
                         <ul className="lessons-list">
+                            {console.log(userCourse)}
                             {userCourse.user_lessons.map(user_lesson => {
                                 console.log(user_lesson);
                                 return <LessonItem key={user_lesson['lesson'].id} user_lesson={user_lesson}></LessonItem>
@@ -121,13 +122,13 @@ function CoursePage() {
     return (
         <div className="main">
             <div className="breadcrumbs">
-                <button className="back-button" onClick={() => navigate(-1)}>Back</button>
+                {/* <button className="back-button" onClick={() => navigate('/courses/')}>Back</button> */}
             </div>
             <div className="content-container">
                 {buildPage(course, userCourse)}
             </div>
             <div className="bottom-cta">
-                <button onClick={() => {!user ? navigate('/login') : createCourseRegistration()}}>{userCourse ? "Keep learning" : "Start course"}</button>
+                <button id="course-cta" onClick={() => {!user ? navigate('/login') : createCourseRegistration()}}>{userCourse ? "Keep learning" : "Start course"}</button>
             </div>
         </div>
     )

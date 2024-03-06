@@ -1,11 +1,11 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 
-function NavBar({ user, setUser }) {
+function NavBar({ user, setUser, address }) {
 
     const navigate = useNavigate();
 
     function handleLogOut() {
-        fetch("http://127.0.0.1:5555/logout", {
+        fetch(`http://127.0.0.1:5555/logout`, {
             method: 'DELETE',
             credentials: 'include',
         })
@@ -31,7 +31,7 @@ function NavBar({ user, setUser }) {
 
     return (
         <div className="navbar">
-            <div id="logo"><NavLink to="/">Grasp</NavLink></div>
+            <div id="logo"><Link to="/">Grasp</Link></div>
             <ul className="nav-ul">
                 <li className="nav-li"><NavLink to="/courses">Courses</NavLink></li>
             </ul>

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import toast, { Toaster } from 'react-hot-toast';
 
 function Signup() {
 
@@ -33,12 +34,16 @@ function Signup() {
                 };
             })
             .then(newUser => {
-                console.log(newUser);
+                toast.success('Account created! Please log in.');
             })
             .catch(error => {
-                console.log(error);
+                toast.error('Error while creating account. Please try again.');
               });
-        }
+            
+            setEmail("");
+            setPassword("");
+            setConfirmPassword("");
+    }
     }
 
     return (
@@ -70,6 +75,19 @@ function Signup() {
                 <hr />
                 <p>Already have an account? <Link to="/login">Log in</Link></p>
             </div>
+            <Toaster toastOptions={
+                            {duration: 3000,
+                            success: {
+                                style: {
+                                    background: '#79ad5b',
+                                    color: '#F8F9F7'
+                                }
+                            },
+                            error: {
+                                style: {
+                                    background: '#D24E46',
+                                    color: '#F8F9F7'}
+                            }}}></Toaster>
         </div>
     )
 }

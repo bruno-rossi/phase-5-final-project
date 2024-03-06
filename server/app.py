@@ -166,12 +166,14 @@ def course_registration(course_id):
             db.session.add(new_user_course)
             db.session.commit()
 
+            print(new_user_course)
+
             course_lessons = []
             for lesson in new_user_course.course.lessons:
                 if not lesson.prev_lesson:
-                    user_lesson = UserLesson(user_course_id=new_user_course.course.id, lesson_id=lesson.id, is_unlocked=True)
+                    user_lesson = UserLesson(user_course_id=new_user_course.id, lesson_id=lesson.id, is_unlocked=True)
                 else:
-                    user_lesson = UserLesson(user_course_id=new_user_course.course.id, lesson_id=lesson.id)
+                    user_lesson = UserLesson(user_course_id=new_user_course.id, lesson_id=lesson.id)
                 course_lessons.append(user_lesson)
 
             db.session.add_all(course_lessons)
@@ -182,6 +184,23 @@ def course_registration(course_id):
         # Return 404 error if user course is not found:
         else:
             return {"error": "User course not found."}, 404
+        
+@app.route('/user-courses/<int:user_course_id>/user-lessons/<int:lesson_id>/', methods=['GET', 'PATCH'], endpoint='user-lessons')
+def user_lessons(user_course_id, lesson_id):
+
+    user_lesson = UserLesson.query.filter(UserLesson.lesson_id == lesson_id).filter(UserLesson.user_course_id == user_course_id).first()
+
+    if user_lesson:
+        if request.method == 'GET':
+            return user_lesson.to_dict(), 200
+        if request.method == 'PATCH':
+            for attr in request.get_json():
+                setattr(user_lesson, attr, request.get_json()[attr])
+
+            db.session.add(user_lesson)
+            db.session.commit()
+
+            return user_lesson.to_dict(), 202
     
 # Get all languages
 @app.route('/languages/', endpoint='languages')

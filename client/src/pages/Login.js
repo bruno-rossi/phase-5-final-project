@@ -1,5 +1,6 @@
 import { Link, useOutletContext, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import toast, { Toaster } from 'react-hot-toast';
 
 function Login() {
 
@@ -29,17 +30,18 @@ function Login() {
                 if (response.ok) {
                     return response.json();
                 } 
-                // else if (response.status == 409) {
-                //     throw new Error('Failed to log in');
-                // };
+                else if (response.status == 409) {
+                    throw new Error('Failed to log in');
+                };
             })
             .then(newUser => {
                 setUser(newUser);
-                navigate(-1)
+                toast.success('Success! Logging you in...');
+                navigate("/courses/")
             })
             .catch(error => {
-                console.log(error);
-              });
+                toast.error('Error logging in, please try again..');
+            });
     }
 
     return (
@@ -66,6 +68,19 @@ function Login() {
                 <hr />
                 <p>Don't have an account yet? <Link to="/signup">Sign up</Link></p>
             </div>
+            <Toaster toastOptions={
+                            {duration: 3000,
+                            success: {
+                                style: {
+                                    background: '#79ad5b',
+                                    color: '#F8F9F7'
+                                }
+                            },
+                            error: {
+                                style: {
+                                    background: '#D24E46',
+                                    color: '#F8F9F7'}
+                            }}}></Toaster>
         </div>
     )
 }

@@ -2,7 +2,7 @@ function Footer() {
 
     return (
         <div id="footer">
-            <p>Footer</p>
+            <p>© Grasp LLC — All rights reserved.</p>
         </div>
     )
 }

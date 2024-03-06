@@ -13,7 +13,7 @@ function CourseCard({ course }) {
                         </div>
                         <h5>{course.language.language_name}</h5>
                         <h1>{course.title}</h1>
-                        <p># of lessons: {course.lessons.length}</p>
+                        <p>{course.description}</p>
                     </div>
                 </Link>
         ) : null}
