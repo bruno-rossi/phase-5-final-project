@@ -7,7 +7,7 @@ function Login() {
     const [ email, setEmail ] = useState("");
     const [ password, setPassword ] = useState("");
 
-    const { user, setUser } = useOutletContext();
+    const { setUser } = useOutletContext();
 
     const navigate = useNavigate()
 
@@ -30,7 +30,7 @@ function Login() {
                 if (response.ok) {
                     return response.json();
                 } 
-                else if (response.status == 409) {
+                else if (response.status === 409) {
                     throw new Error('Failed to log in');
                 };
             })
@@ -46,6 +46,19 @@ function Login() {
 
     return (
         <div className="main">
+            <Toaster toastOptions={
+                            {duration: 3000,
+                            success: {
+                                style: {
+                                    background: '#79ad5b',
+                                    color: '#F8F9F7'
+                                }
+                            },
+                            error: {
+                                style: {
+                                    background: '#D24E46',
+                                    color: '#F8F9F7'}
+                            }}}></Toaster>
             <div className="login-form">
                 <form onSubmit={handleSubmit}>
                     <h1>Welcome back!</h1>
@@ -68,19 +81,6 @@ function Login() {
                 <hr />
                 <p>Don't have an account yet? <Link to="/signup">Sign up</Link></p>
             </div>
-            <Toaster toastOptions={
-                            {duration: 3000,
-                            success: {
-                                style: {
-                                    background: '#79ad5b',
-                                    color: '#F8F9F7'
-                                }
-                            },
-                            error: {
-                                style: {
-                                    background: '#D24E46',
-                                    color: '#F8F9F7'}
-                            }}}></Toaster>
         </div>
     )
 }

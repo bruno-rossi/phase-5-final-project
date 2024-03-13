@@ -10,7 +10,7 @@ function Question({ question, lesson, unlockNext }) {
     const [ userInput, setUserInput ] = useState("");
     const [ aiResponse, setAiResponse] = useState("");
 
-    const { user, setUser } = useOutletContext();
+    const { user } = useOutletContext();
     
     console.log(question);
 
@@ -18,7 +18,7 @@ function Question({ question, lesson, unlockNext }) {
     
     Please respond with the corrected input in HTML inside <p> tags. Make sure to provide a new paragraph tag for each paragraph in the input! 
     
-    Inside the p tag(s), find the mistakes and wrap them in a <span className="mistakes"> HTML tag. And then, in a new line, list the corrections you made under an HTML unordered list: "<ul><p>Corrections:</p></ul>". Please add a new line for each correction with its corresponding <li></li> tag. If there are no mistakes to correct, please respond with: "<p>Congratulations! Your response looks great!"</p>"`
+    Inside the p tag(s), find the mistakes and wrap them in a <span className="mistakes"> HTML tag. And then, in a new line, list the corrections you made under an HTML unordered list: "<ul></ul>". Please add a new line for each correction with its corresponding <li></li> tag. If there are no mistakes to correct, please respond with: "<p>Congratulations! Your response looks great!"</p>"`
 
     useEffect(() => {
 

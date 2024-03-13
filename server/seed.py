@@ -462,17 +462,6 @@ if __name__ == '__main__':
         db.session.add_all(lessons)
         db.session.commit()
 
-
-        # print("Adding courses to users...")
-
-        # user_course1 = UserCourse(
-        #     user_id="1",
-        #     course_id="1"
-        # )
-
-        # db.session.add(user_course1)
-        # db.session.commit()
-
         print("Seeding questions...")
 
         question1 = Question(

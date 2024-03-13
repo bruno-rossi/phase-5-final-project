@@ -93,7 +93,7 @@ body {
         flex-direction: column;
         flex-wrap: wrap;
         justify-content: center;
-        gap: 1%;
+        gap: 0.5%;
     }
     .pillar {
         width: 80%;

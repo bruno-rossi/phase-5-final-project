@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -7,6 +7,8 @@ function Signup() {
     const [ email, setEmail ] = useState("");
     const [ password, setPassword ] = useState("");
     const [ confirmPassword, setConfirmPassword ] = useState("");
+
+    const navigate = useNavigate();
 
     function handleSubmit(event) {
         event.preventDefault();
@@ -35,6 +37,7 @@ function Signup() {
             })
             .then(newUser => {
                 toast.success('Account created! Please log in.');
+                navigate('/login/');
             })
             .catch(error => {
                 toast.error('Error while creating account. Please try again.');
@@ -48,6 +51,19 @@ function Signup() {
 
     return (
         <div className="main">
+            <Toaster toastOptions={
+                            {duration: 3000,
+                            success: {
+                                style: {
+                                    background: '#79ad5b',
+                                    color: '#F8F9F7'
+                                }
+                            },
+                            error: {
+                                style: {
+                                    background: '#D24E46',
+                                    color: '#F8F9F7'}
+                            }}}></Toaster>
             <div className="login-form">
                 <form onSubmit={handleSubmit}>
                     <h1>Welcome!</h1>
@@ -75,19 +91,6 @@ function Signup() {
                 <hr />
                 <p>Already have an account? <Link to="/login">Log in</Link></p>
             </div>
-            <Toaster toastOptions={
-                            {duration: 3000,
-                            success: {
-                                style: {
-                                    background: '#79ad5b',
-                                    color: '#F8F9F7'
-                                }
-                            },
-                            error: {
-                                style: {
-                                    background: '#D24E46',
-                                    color: '#F8F9F7'}
-                            }}}></Toaster>
         </div>
     )
 }
